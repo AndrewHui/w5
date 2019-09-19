@@ -39,6 +39,7 @@ function getAllListings(params) {
 }
 
 function getAllReservations() {
+  console.log('MAKING THE REQUEST')
   let url = "/api/reservations";
   return $.ajax({
     url,
