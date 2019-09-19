@@ -14,4 +14,5 @@ join property_reviews
 on properties.id = property_reviews.property_id 
 WHERE property_reviews.guest_id = 1 and (now()::date - reservations.end_date) >= 0
 GROUP BY properties.title, reservations.id, reservations.start_date, properties.cost_per_night
+ORDER BY reservations.start_date DESC
 LIMIT 10;

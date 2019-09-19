@@ -14,7 +14,8 @@ from properties join property_reviews
 ON properties.id = property_reviews.property_id
 JOIN reservations 
 ON reservations.id = property_reviews.reservation_id
-WHERE property_reviews.rating >= 4 and properties.city = 'Vancouver'
+WHERE properties.city = 'Vancouver'
 GROUP BY properties.id
+HAVING avg(property_reviews.rating) >= 4
 ORDER BY avgrating ASC
 LIMIT 10;
