@@ -1,13 +1,6 @@
 const properties = require('./json/properties.json');
 const users = require('./json/users.json');
-const { Pool } = require('pg');
-
-const pool = new Pool({
-  user: 'vagrant',
-  password: '123',
-  host: 'localhost',
-  database: 'lightbnb'
-});
+const db = require('../db/index.js');
 
 /// Users
 
@@ -25,7 +18,7 @@ const getUserWithEmail = function(email) {
   WHERE email = $1;
   `;
 
-  return pool.query(queryString, values)
+  return db.pool.query(queryString, values)
     .then(res => {
       return res.rows[0];
     })
@@ -51,7 +44,7 @@ const getUserWithId = function(id) {
   WHERE id = $1;
   `;
 
-  return pool.query(queryString, values)
+  return db.pool.query(queryString, values)
     .then(res => {
       return res.rows[0];
     })
@@ -69,7 +62,7 @@ exports.getUserWithId = getUserWithId;
  */
 const addUser =  function(user) {
   const values = [user.name, user.email, user.password]
-  return pool.query(`INSERT INTO users(name, email, password)
+  return db.pool.query(`INSERT INTO users(name, email, password)
   VALUES ($1, $2, $3) RETURNING *`, values)
   .then (res => {
     return res.rows[0];
@@ -90,7 +83,7 @@ const getAllReservations = function(guest_id, limit = 10) {
 //16
   const values = [guest_id, limit]
 
-  return pool.query(`SELECT properties.*, reservations.*, avg(rating) as average_rating
+  return db.pool.query(`SELECT properties.*, reservations.*, avg(rating) as average_rating
   FROM reservations
   JOIN properties ON reservations.property_id = properties.id
   JOIN property_reviews ON properties.id = property_reviews.property_id 
@@ -184,7 +177,7 @@ const getAllProperties = function(options, limit = 10) {
   console.log(queryString, queryParams);
 
   // 6
-  return pool.query(queryString, queryParams)
+  return db.pool.query(queryString, queryParams)
   .then(res => res.rows);
 }
 
@@ -204,7 +197,7 @@ const addProperty = function(property) {
   VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
   RETURNING *;`
 
-  return pool.query(queryString, params)
+  return db.pool.query(queryString, params)
   .then(res => {
     return res.rows
   })
